@@ -83,7 +83,8 @@ def predict_completion(dataroot,modelName, checkpointns_dir):
         # web_dir = os.path.join("results", opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
         c_img = save_visuals(visuals)
         final_images.extend(c_img)
-    print("Process correctly done", len(final_images))
+    return final_images
+    
 if __name__ == "__main__":
     checkpoints = "./checkpoints"
     name_model = "feather_remote_sensing" 
