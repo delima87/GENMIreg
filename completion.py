@@ -21,7 +21,7 @@ def save_visuals(visuals,aspect_ratio,image_path, image_dir):
         util.save_image(im, save_path, aspect_ratio=aspect_ratio)
     return images
 
-def estimate_completion(name_model):
+def estimate_completion(name_model,checkpoints):
     opt = TestOptions().parse()  # get test options
     # hard-code some parameters for test
     opt.num_threads = 0   # test code only supports num_threads = 0
@@ -31,10 +31,10 @@ def estimate_completion(name_model):
     opt.display_id = -1   # no visdom display; the test code saves the results to a HTML file.
     opt.dataroot = "./temp"
     opt.name = name_model
+    opt.checkpoints_dir = checkpoints
     dataset = create_dataset(opt)  # create a dataset given opt.dataset_mode and other options
     model = create_model(opt)      # create a model given opt.model and other options
     model.setup(opt)               # regular setup: load and print networks; create schedulers
-    # create a website
     web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
     if opt.load_iter > 0:  # load_iter is 0 by default
         web_dir = '{:s}_iter{:d}'.format(web_dir, opt.load_iter)
@@ -59,9 +59,5 @@ def estimate_completion(name_model):
         final_images.extend(c_img)
     return final_images
 
-
-if __name__ == '__main__':
-    estimate_completion("feather_remote_sensing")
-    print("DONE")
     
     
