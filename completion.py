@@ -1,4 +1,3 @@
-
 import os
 from PIL.Image import LANCZOS
 from options.test_options import TestOptions
