@@ -27,7 +27,7 @@ class MIStructure:
         self.ty = _ty
         self.angle = _angle
 
-def getOptimalTransformation(query,target,outdir):
+def getOptimalTransformation(query,target):
     mi_values =  []
     mi_class = []
     for tx in range(-query.shape[1],query.shape[1],8):
@@ -49,7 +49,7 @@ def getOptimalTransformation(query,target,outdir):
         best_img = stitch_imgs_canvas(query,mi_class[s_id[i]].angle, mi_class[s_id[i]].tx,mi_class[s_id[i]].ty,target)
         best_imgs.append(best_img)
         mi_heights.append(round(mi_class[s_id[i]].mi,5))
-        file =  outdir + "/best_img_" + str(i) + "_mi_" + str(round(mi_class[s_id[i]].mi,5)) + ".jpg"
+        # file =  outdir + "/best_img_" + str(i) + "_mi_" + str(round(mi_class[s_id[i]].mi,5)) + ".jpg"
     return best_imgs            
                 
 def apply_transformation(img, angle, tx, ty):
