@@ -46,7 +46,7 @@ def getOptimalTransformation(query,target):
     # saving best imgs
     best_imgs = []
     mi_heights = []
-    for i in range(-1,-10,-1):
+    for i in range(-1,-11,-1):
         # print("mi",mi_class[s_id[i]].mi)
         best_img = stitch_imgs_canvas(query,mi_class[s_id[i]].angle, mi_class[s_id[i]].tx,mi_class[s_id[i]].ty,target)
         best_imgs.append(best_img)
