@@ -5,14 +5,18 @@ import random
 import regUtils as regutils
 import inpainting as inp
 from completion import predict_completion
+from mi_registration import getOptimalTransformation
 import sign_classifier as sc
+
+
+
 def create_random_puzzles(imgFile):
     img = cv2.imread(imgFile,0)
     img1,img1C = regutils.create_patch_completion(img,64,112,True)
     img2,img2C = regutils.create_patch_completion(img,64,112,True)
     img1_gaps = get_generated_randoms(img1)
     img2_gaps = get_generated_randoms(img2)
-    return img1_gaps,img1C,img2_gaps,img2C
+    return img1_gaps,img1,img1C,img2_gaps,img2,img2C
 
 def get_generated_randoms(img):
     y = np.expand_dims(img, -1) / 255
@@ -20,8 +24,6 @@ def get_generated_randoms(img):
     x, m = regutils.generate_random_gap([y], s)
     return  x[0] * 255
 
-
-          
 
 if __name__ == "__main__":
     # inputs
@@ -48,9 +50,17 @@ if __name__ == "__main__":
     cv2.imwrite("temp/testB/imB.jpg",img2C)
     # completion
     checkpoints = "./checkpoints"
-    name_model =  sign_classA + "_remote_sensing" 
+    name_model = "eye_remote_sensing" 
     data = "./temp"
     predicted_imgs = predict_completion(data,name_model,checkpoints)
+    # registration
+    print("computing rigid transformation")
+    size = 112
+    pac = cv2.resize(predicted_imgs[1], (size,size), interpolation = cv2.INTER_AREA)
+    pbc = cv2.resize(predicted_imgs[3], (size,size), interpolation = cv2.INTER_AREA)
+    pac = cv2.cvtColor(pac, cv2.COLOR_BGR2GRAY)
+    pbc = cv2.cvtColor(pbc, cv2.COLOR_BGR2GRAY)
+    getOptimalTransformation(pac,pbc)
     # visualization
     img1 = np.reshape(img1, (112,112))
     img2 = np.reshape(img2, (112,112))
@@ -59,6 +69,7 @@ if __name__ == "__main__":
     ax1.imshow(predicted_imgs[1],cmap='gray')
     ax2.imshow(predicted_imgs[3],cmap='gray')
     plt.show()  
+
 
 
 
