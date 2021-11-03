@@ -34,7 +34,7 @@ def getOptimalTransformation(query,target):
     for tx in tqdm(range(-query.shape[1],query.shape[1],8)):
         pass
         for ty in range(-query.shape[0],query.shape[0],8):
-            for angle in range (0,360,36):
+            for angle in range (0,360,18):
                 query_t = apply_transformation(query,angle,tx,ty)
                 mi = mutual_information(query_t,target)
                 cur_mi = MIStructure(mi,tx,ty,angle)
