@@ -4,8 +4,6 @@ from matplotlib import pyplot as plt
 import random 
 import regUtils as regutils
 import inpainting as inp
-from completion import predict_completion
-from mi_registration import getOptimalTransformation
 import sign_classifier as sc
 
 
@@ -23,52 +21,6 @@ def get_generated_randoms(img):
     s = random.randint(0,100)
     x, m = regutils.generate_random_gap([y], s)
     return  x[0] * 255
-
-
-if __name__ == "__main__":
-    # inputs
-    inFile = "pairwise_puzzle\eye_im2d.jpg"
-    inpaintingModelFile = "ModelsOffline\model1.h5"
-    signClassifierModelFile = "ModelsOffline\signs_recog_remote_sensing_30.model"
-    inpaintingModel= inp.load_line_inpainting_model(inpaintingModelFile)
-    signClassifierModel = sc.loadModel(signClassifierModelFile)
-    # create puzzles
-    img1, img1C, img2, img2C = create_random_puzzles(inFile)
-    # inpainting
-    img1_inp,a = inp.fill_gaps(img1,inpaintingModel)
-    img2_inp,b = inp.fill_gaps(img2,inpaintingModel)
-    # classify signs
-    img1_inp_c = cv2.cvtColor(img1_inp,cv2.COLOR_GRAY2RGB)
-    img2_inp_c = cv2.cvtColor(img2_inp,cv2.COLOR_GRAY2RGB)
-    sign_classA, sign_scoreA = sc.recognize_image(img1_inp_c,signClassifierModel)
-    sign_classB, sign_scoreB = sc.recognize_image(img2_inp_c,signClassifierModel)
-    print("classified CLASSES",sign_classA,sign_classB)
-    # save images in file for completion
-    cv2.imwrite("temp/testA/imA.jpg",img1_inp)
-    cv2.imwrite("temp/testA/imB.jpg",img2_inp)
-    cv2.imwrite("temp/testB/imA.jpg",img1C)
-    cv2.imwrite("temp/testB/imB.jpg",img2C)
-    # completion
-    checkpoints = "./checkpoints"
-    name_model = "eye_remote_sensing" 
-    data = "./temp"
-    predicted_imgs = predict_completion(data,name_model,checkpoints)
-    # registration
-    print("computing rigid transformation")
-    size = 112
-    pac = cv2.resize(predicted_imgs[1], (size,size), interpolation = cv2.INTER_AREA)
-    pbc = cv2.resize(predicted_imgs[3], (size,size), interpolation = cv2.INTER_AREA)
-    pac = cv2.cvtColor(pac, cv2.COLOR_BGR2GRAY)
-    pbc = cv2.cvtColor(pbc, cv2.COLOR_BGR2GRAY)
-    getOptimalTransformation(pac,pbc)
-    # visualization
-    img1 = np.reshape(img1, (112,112))
-    img2 = np.reshape(img2, (112,112))
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-    fig.suptitle('Random Segments of Ancient Inscriptions')
-    ax1.imshow(predicted_imgs[1],cmap='gray')
-    ax2.imshow(predicted_imgs[3],cmap='gray')
-    plt.show()  
 
 
 
