@@ -5,6 +5,7 @@ from regUtils import rotateImg
 import random
 from matplotlib import pyplot as plt
 import os
+from tqdm import tqdm
 
 def mutual_information(im1,im2):
     hgram, x_edges, y_edges = np.histogram2d(
@@ -30,8 +31,8 @@ class MIStructure:
 def getOptimalTransformation(query,target):
     mi_values =  []
     mi_class = []
-    for tx in range(-query.shape[1],query.shape[1],8):
-        print("row")
+    for tx in tqdm(range(-query.shape[1],query.shape[1],8)):
+        pass
         for ty in range(-query.shape[0],query.shape[0],8):
             for angle in range (0,360,36):
                 query_t = apply_transformation(query,angle,tx,ty)
